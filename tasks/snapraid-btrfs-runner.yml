@@ -1,0 +1,30 @@
+---
+- name: Setup snapraid-btrfs
+  ansible.builtin.git:
+    repo: https://github.com/automorphism88/snapraid-btrfs.git
+    dest: /opt/snapraid-btrfs
+
+- name: Clone snapraid-btrfs-runner
+  ansible.builtin.git:
+    repo: https://github.com/fmoledina/snapraid-btrfs-runner
+    dest: /opt/snapraid-btrfs-runner
+
+- name: Install snapraid-btrfs-runner configuration file
+  ansible.builtin.template:
+    src: snapraid-runner.conf.j2
+    dest: '{{ snapraid_btrfs_runner_conf }}'
+    owner: root
+    group: root
+    mode: 0775
+
+- name: Setup cron job snapraid-btrfs-runner
+  ansible.builtin.cron:
+    user: 'root'
+    job: '{{ item.job }}'
+    name: '{{ item.name }}'
+    weekday: "{{ item.weekday | default('*') }}"
+    minute: "{{ item.minute | default('00') }}"
+    hour: "{{ item.hour | default('00') }}"
+    dom: "{{ item.dom | default('*') }}"
+  with_items:
+    - '{{ snapraid_btrfs_runner_cron_jobs }}'

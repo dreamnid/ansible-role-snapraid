@@ -1,3 +1,20 @@
+[snapraid-btrfs]
+; path to the snapraid-btrfs executable (e.g. /usr/bin/snapraid-btrfs)
+executable = {{ snapraid_btrfs_bin_path }}
+; optional: specify snapper-configs and/or snapper-configs-file as specified in snapraid-btrfs
+; only one instance of each can be specified in this config
+snapper-configs = 
+snapper-configs-file = 
+; specify whether snapraid-btrfs should run the pool command after the sync, and optionally specify pool-dir 
+pool = false
+pool-dir =
+; specify whether snapraid-btrfs-runner should automatically clean up all but the last snapraid-btrfs sync snapshot after a successful sync
+cleanup = true
+
+[snapper]
+; path to snapper executable (e.g. /usr/bin/snapper)
+executable = /usr/bin/snapper
+
 [snapraid]
 ; path to the snapraid executable
 executable = {{ snapraid_bin_path }}

@@ -1,9 +1,8 @@
 ---
-
 - name: Schedule snapraid sync
   cron:
-    name: snapraid sync
-    job: snapraid sync {% if snapraid_sync_healthcheck_io_uuid %}&& curl -fsS -m 10 --retry 5 -o /dev/null {{ snapraid_healthcheck_io_host }}/{{ snapraid_sync_healthcheck_io_uuid }}{% endif %}
+    name: '{{ snapraid_bin_path }} sync'
+    job: '{{ snapraid_bin_path }} sync -l ">>/var/log/snapraid.log"{% if snapraid_sync_log %} -l ">>{{ snapraid_sync_log }}"{% endif %}{% if snapraid_sync_healthcheck_io_uuid %} && curl -fsS -m 10 --retry 5 -o /dev/null {{ snapraid_healthcheck_io_host }}/{{ snapraid_sync_healthcheck_io_uuid }}{% endif %}'
     user: root
     weekday: "{{ snapraid_sync_schedule.weekday | default ('*') }}"
     minute: "{{ snapraid_sync_schedule.minute | default ('0')}}"
@@ -12,8 +11,8 @@
 
 - name: Schedule snapraid scrub
   cron:
-    name: snapraid scrub
-    job: snapraid scrub --plan {{ snapraid_scrub_percent }} --older-than {{ snapraid_scrub_age }} {% if snapraid_scrub_healthcheck_io_uuid %}&& curl -fsS -m 10 --retry 5 -o /dev/null {{ snapraid_healthcheck_io_host }}/{{ snapraid_scrub_healthcheck_io_uuid }}{% endif %}
+    name: '{{ snapraid_bin_path }} scrub'
+    job: '{{ snapraid_bin_path }} scrub --plan {{ snapraid_scrub_percent }} --older-than {{ snapraid_scrub_age }}{% if snapraid_scrub_log %} -l ">>{{ snapraid_scrub_log }}"{% endif %}{% if snapraid_scrub_healthcheck_io_uuid %} && curl -fsS -m 10 --retry 5 -o /dev/null {{ snapraid_healthcheck_io_host }}/{{ snapraid_scrub_healthcheck_io_uuid }}{% endif %}'
     user: root
     weekday: "{{ snapraid_scrub_schedule.weekday | default ('*') }}"
     minute: "{{ snapraid_scrub_schedule.minute | default ('0')}}"
